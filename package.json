@@ -1,0 +1,20 @@
+{
+  "name": "kafka-test-helper",
+  "version": "0.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/chrvadala/kafka-test-helper.git",
+  "author": "Christian Vadalà <chr.vadala@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
+  },
+  "devDependencies": {
+    "jest": "^27.2.1"
+  },
+  "dependencies": {
+    "kafkajs": "^1.15.0",
+    "wait-for-expect": "^3.0.2"
+  }
+}
