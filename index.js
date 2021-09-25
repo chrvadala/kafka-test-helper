@@ -133,6 +133,7 @@ export class TopicSpy {
     static offsetDelta(offset1, offset2) {
         const n1 = Number(offset1)
         const n2 = Number(offset2)
+        if(n1 < 0 && n2 >= 0 ) return n2
         return n2 - n1
     }
 }

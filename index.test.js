@@ -206,7 +206,39 @@ describe("consumedMessagesByGroup", () => {
         await consumer.disconnect()
     }, 10_000)
 
-    it.todo("should calculate consumed message by a group - consumer does not exist on setup")
+    it("should calculate consumed message by a group - consumer does not exist on setup", async () => {
+        const testTopic = randomString('topic')
+        const testGroup = randomString('group')
+        const handleMessage = jest.fn()
+
+        await createTopic(testTopic)
+
+        //setup
+        const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
+        await spiedTopic.setup()
+        expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(0)
+
+        //init consumer
+        const consumer = kafka.consumer({ groupId: testGroup, ...CONSUMER_TIMEOUT_DEFAULTS })
+        await consumer.connect()
+        await consumer.subscribe({ topic: testTopic, fromBeginning: true })
+        await consumer.run({
+            eachMessage: handleMessage
+        })
+
+        await produceMessages(testTopic, [
+            { value: 'message-1' },
+            { value: 'message-2' },
+            { value: 'message-3' },
+        ])
+
+        await waitForExpect(() => {
+            expect(handleMessage).toHaveBeenCalledTimes(3);
+        })
+
+        expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(3)
+        await consumer.disconnect()
+    }, 10_000)
 })
 
 let i = 0;
