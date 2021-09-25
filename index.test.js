@@ -278,6 +278,52 @@ describe("pendingMessagesByGroup", () => {
     }, 10_000)
 })
 
+describe("messages and messageCount", () => {
+    it("should return produced messages", async () => {
+        const testTopic = randomString('topic')
+
+        await produceMessages(testTopic, [
+            { value: 'message-x' },
+            { value: 'message-y' },
+            { value: 'message-z' },
+        ])
+
+        const spiedTopic = new TopicSpy(kafka, testTopic)
+        await spiedTopic.setup()
+
+        await expect(spiedTopic.messageCount()).resolves.toBe(0)
+        await expect(spiedTopic.messages()).resolves.toHaveLength(0)
+
+        await produceMessages(testTopic, [
+            { value: 'message-1' },
+            { value: 'message-2' },
+            { value: 'message-3' },
+        ])
+        
+        await expect(spiedTopic.messageCount()).resolves.toBe(3)
+        await expect(spiedTopic.messages()).resolves.toEqual([
+            { headers: {}, partition: 0, value: Buffer.from('message-1') },
+            { headers: {}, partition: 0, value: Buffer.from('message-2') },
+            { headers: {}, partition: 0, value: Buffer.from('message-3') },
+        ])
+
+        await produceMessages(testTopic, [
+            { value: 'message-4' },
+            { value: 'message-5' },
+        ])
+
+        await expect(spiedTopic.messageCount()).resolves.toBe(5)
+        await expect(spiedTopic.messages()).resolves.toEqual([
+            { headers: {}, partition: 0, value: Buffer.from('message-1') },
+            { headers: {}, partition: 0, value: Buffer.from('message-2') },
+            { headers: {}, partition: 0, value: Buffer.from('message-3') },
+            { headers: {}, partition: 0, value: Buffer.from('message-4') },
+            { headers: {}, partition: 0, value: Buffer.from('message-5') },
+        ])
+
+    }, 40_000)
+})
+
 
 let i = 0;
 const randomString = prefix => {

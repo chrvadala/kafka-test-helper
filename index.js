@@ -7,6 +7,13 @@ export async function spyTopic(kafka, topic, groupIds = []) {
     return new TopicSpy(kafka, topic, groupIds)
 }
 
+const GROUP_ID_PREFIX = 'kafka-test-helper-'
+const CONSUMER_TIMEOUT_DEFAULTS = {
+    sessionTimeout: 10_000,
+    rebalanceTimeout: 12_000,
+    heartbeatInterval: 500,
+}
+
 export class TopicSpy {
     #kafka; #topic; #groupIds;
 
@@ -83,8 +90,67 @@ export class TopicSpy {
         return tot
     }
 
+    async messageCount() {
+        const admin = await this.#getAdmin()
+
+        const curTopicOffsets = await admin.fetchTopicOffsets(this.#topic)
+        let delta = 0;
+        for (let i = 0; i < this.#topicOffsets.length; i++) {
+            delta += TopicSpy.offsetDelta(
+                this.#topicOffsets[i].offset,
+                curTopicOffsets[i].offset
+            )
+        }
+
+        await admin.disconnect()
+        return delta
+    }
+
     async messages() {
-        //TODO
+        const admin = await this.#getAdmin()
+        const groupId = GROUP_ID_PREFIX + Math.round(Math.random() * 100_000)
+        let messages = []
+        
+        //move cursor back
+        const partitions = this.#topicOffsets.map(({ partition, offset }) => ({ partition, offset }))
+        await admin.setOffsets({
+            groupId,
+            topic: this.#topic,
+            partitions
+        })
+        await admin.disconnect()
+        
+        
+        //consume messages
+        const consumer = this.#kafka.consumer({
+            groupId,
+            ...CONSUMER_TIMEOUT_DEFAULTS
+        })
+        await consumer.connect()
+        await consumer.subscribe({ topic: this.#topic, fromBeginning: true })
+        await consumer.run({
+            eachMessage: ({ partition, message }) => messages.push({
+                partition,
+                headers: message.headers,
+                value: message.value
+            })
+        })
+        
+        //wait messages
+        const expectedMessages = await this.messageCount()
+        await new Promise((done) => { 
+            const interval = setInterval( () => {
+                if(messages.length >= expectedMessages){
+                    clearInterval(interval)
+                    consumer.pause()
+                    done()
+                }
+            }, 50)
+        })
+        
+        await consumer.disconnect()
+        await admin.disconnect()
+        return messages.slice(0, expectedMessages)
     }
 
     async consumedMessagesByGroup(groupId, partition = null) {
