@@ -241,6 +241,44 @@ describe("consumedMessagesByGroup", () => {
     }, 10_000)
 })
 
+describe("pendingMessagesByGroup", () => {
+    it("should calculate pending message on a group", async () => {
+        const testTopic = randomString('topic')
+        const testGroup = randomString('group')
+        const handleMessage = jest.fn()
+
+        await createTopic(testTopic)
+
+        const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
+        await spiedTopic.setup()
+
+        expect(await spiedTopic.pendingMessagesByGroup(testGroup)).toBe(0)
+
+        await produceMessages(testTopic, [
+            { value: 'message-1' },
+            { value: 'message-2' },
+            { value: 'message-3' },
+        ])
+
+        expect(await spiedTopic.pendingMessagesByGroup(testGroup)).toBe(3)
+
+        //init consumer
+        const consumer = kafka.consumer({ groupId: testGroup, ...CONSUMER_TIMEOUT_DEFAULTS })
+        await consumer.connect()
+        await consumer.subscribe({ topic: testTopic, fromBeginning: true })
+        await consumer.run({
+            eachMessage: handleMessage
+        })
+        await waitForExpect(() => {
+            expect(handleMessage).toHaveBeenCalledTimes(3);
+        })
+
+        expect(await spiedTopic.pendingMessagesByGroup(testGroup)).toBe(0)
+        await consumer.disconnect()
+    }, 10_000)
+})
+
+
 let i = 0;
 const randomString = prefix => {
     const random = new Date().toISOString()

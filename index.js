@@ -115,7 +115,31 @@ export class TopicSpy {
     }
 
     async pendingMessagesByGroup(groupId, partition = null) {
-        //TODO
+        if(!this.#groupIds.includes(groupId)){
+            throw new Error(GROUP_NOT_INITIALIZED)
+        }
+        const admin = await this.#getAdmin()
+
+        const currentGroupTopicOffsets = await admin.fetchOffsets({
+            groupId, topic: this.#topic
+        })
+
+       const topicOffsets = await admin.fetchTopicOffsets(this.#topic)
+
+       if (currentGroupTopicOffsets.length !== topicOffsets.length) {
+        throw new Error(PARTITION_COUNT_DIFFERENCE_ERROR)
+    }
+
+       let delta = 0;
+        for (let i = 0; i < currentGroupTopicOffsets.length; i++) {
+            delta += TopicSpy.offsetDelta(
+                currentGroupTopicOffsets[i].offset,
+                topicOffsets[i].offset
+            )
+        }
+
+        await admin.disconnect()
+        return delta
     }
 
     async #getAdmin() {
