@@ -16,6 +16,7 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
     sessionTimeout: 10_000,
     rebalanceTimeout: 12_000,
     heartbeatInterval: 500,
+    maxWaitTimeInMs: 100,
 }
 
 beforeAll(async () => {
@@ -204,7 +205,7 @@ describe("consumedMessagesByGroup", () => {
 
         expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(2)
         await consumer.disconnect()
-    }, 10_000)
+    })
 
     it("should calculate consumed message by a group - consumer does not exist on setup", async () => {
         const testTopic = randomString('topic')
@@ -238,7 +239,7 @@ describe("consumedMessagesByGroup", () => {
 
         expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(3)
         await consumer.disconnect()
-    }, 10_000)
+    })
 })
 
 describe("pendingMessagesByGroup", () => {
@@ -275,7 +276,7 @@ describe("pendingMessagesByGroup", () => {
 
         expect(await spiedTopic.pendingMessagesByGroup(testGroup)).toBe(0)
         await consumer.disconnect()
-    }, 10_000)
+    })
 })
 
 describe("messages and messageCount", () => {
@@ -321,7 +322,7 @@ describe("messages and messageCount", () => {
             { headers: {}, partition: 0, value: Buffer.from('message-5') },
         ])
 
-    }, 40_000)
+    })
 })
 
 
