@@ -12,6 +12,7 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
     sessionTimeout: 10_000,
     rebalanceTimeout: 12_000,
     heartbeatInterval: 500,
+    maxWaitTimeInMs: 100,
 }
 
 export class TopicSpy {
@@ -111,16 +112,6 @@ export class TopicSpy {
         const groupId = GROUP_ID_PREFIX + Math.round(Math.random() * 100_000)
         let messages = []
         
-        //move cursor back
-        const partitions = this.#topicOffsets.map(({ partition, offset }) => ({ partition, offset }))
-        await admin.setOffsets({
-            groupId,
-            topic: this.#topic,
-            partitions
-        })
-        await admin.disconnect()
-        
-        
         //consume messages
         const consumer = this.#kafka.consumer({
             groupId,
@@ -128,15 +119,23 @@ export class TopicSpy {
         })
         await consumer.connect()
         await consumer.subscribe({ topic: this.#topic, fromBeginning: true })
-        await consumer.run({
+        consumer.run({
             eachMessage: ({ partition, message }) => messages.push({
                 partition,
                 headers: message.headers,
                 value: message.value
             })
         })
+        for(const initialPartitionCursor of this.#topicOffsets){
+            await consumer.seek({ 
+                topic: this.#topic, 
+                partition: initialPartitionCursor.partition, 
+                offset: initialPartitionCursor.offset, 
+            })
+        }
         
         //wait messages
+        messages = []
         const expectedMessages = await this.messageCount()
         await new Promise((done) => { 
             const interval = setInterval( () => {
