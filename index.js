@@ -20,7 +20,7 @@ export default async function initKafkaTestHelper(kafka, topic, groupIds = []) {
 export class KafkaTestHelper {
     #kafka; #topic; #groupIds;
 
-    #topicOffsets = null;
+    #topicOffsets = [];
     #groupTopicOffsets = {};
 
     constructor(kafka, topic, groupIds = []) {
