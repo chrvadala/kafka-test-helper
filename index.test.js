@@ -76,12 +76,12 @@ describe("ensureTopicExists", () => {
 
         const spiedTopic = new TopicSpy(kafka, testTopic)
 
-        expect(await admin.listTopics())
+        await expect(admin.listTopics()).resolves
             .toEqual(expect.not.arrayContaining([testTopic]))
 
         await spiedTopic.ensureTopicExists()
 
-        expect(await admin.listTopics())
+        await expect(admin.listTopics()).resolves
             .toEqual(expect.arrayContaining([testTopic]))
     })
 
@@ -94,7 +94,7 @@ describe("ensureTopicExists", () => {
 
         await spiedTopic.ensureTopicExists()
 
-        expect(await admin.listTopics())
+        await expect(admin.listTopics()).resolves
             .toEqual(expect.arrayContaining([testTopic]))
     })
 })
@@ -105,13 +105,13 @@ describe("ensureTopicDeleted", () => {
 
         await createTopic(testTopic)
 
-        expect(await admin.listTopics())
+        await expect(admin.listTopics()).resolves
             .toEqual(expect.arrayContaining([testTopic]))
 
         const spiedTopic = new TopicSpy(kafka, testTopic)
         await spiedTopic.ensureTopicDeleted()
 
-        expect(await admin.listTopics())
+        await expect(admin.listTopics()).resolves
             .toEqual(expect.not.arrayContaining([testTopic]))
     })
 
@@ -120,7 +120,7 @@ describe("ensureTopicDeleted", () => {
 
         const spiedTopic = new TopicSpy(kafka, testTopic)
 
-        expect(await admin.listTopics())
+        await expect(admin.listTopics()).resolves
             .toEqual(expect.not.arrayContaining([testTopic]))
 
         await spiedTopic.ensureTopicDeleted()
@@ -168,7 +168,7 @@ describe("producedMessages", () => {
         const spiedTopic = new TopicSpy(kafka, testTopic)
         await spiedTopic.setup()
 
-        expect(await spiedTopic.producedMessages()).toBe(0)
+        await expect(spiedTopic.producedMessages()).resolves.toBe(0)
 
         await produceMessages(testTopic, [
             { value: 'message-3' },
@@ -176,7 +176,7 @@ describe("producedMessages", () => {
             { value: 'message-5' },
         ])
 
-        expect(await spiedTopic.producedMessages()).toBe(3)
+        await expect(spiedTopic.producedMessages()).resolves.toBe(3)
     })
 
     it.todo("should work when the topic is created after setup")
@@ -211,7 +211,7 @@ describe("consumedMessagesByGroup", () => {
 
         const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
         await spiedTopic.setup()
-        expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(0)
+        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(0)
         await produceMessages(testTopic, [
             { value: 'message-4' },
             { value: 'message-5' },
@@ -221,7 +221,7 @@ describe("consumedMessagesByGroup", () => {
             expect(handleMessage).toHaveBeenCalledTimes(5);
         })
 
-        expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(2)
+        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(2)
         await consumer.disconnect()
     })
 
@@ -235,7 +235,7 @@ describe("consumedMessagesByGroup", () => {
         //setup
         const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
         await spiedTopic.setup()
-        expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(0)
+        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(0)
 
         //init consumer
         const consumer = kafka.consumer({ groupId: testGroup, ...CONSUMER_TIMEOUT_DEFAULTS })
@@ -255,7 +255,7 @@ describe("consumedMessagesByGroup", () => {
             expect(handleMessage).toHaveBeenCalledTimes(3);
         })
 
-        expect(await spiedTopic.consumedMessagesByGroup(testGroup)).toBe(3)
+        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(3)
         await consumer.disconnect()
     })
 })
@@ -271,7 +271,7 @@ describe("pendingMessagesByGroup", () => {
         const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
         await spiedTopic.setup()
 
-        expect(await spiedTopic.pendingMessagesByGroup(testGroup)).toBe(0)
+        await expect(spiedTopic.pendingMessagesByGroup(testGroup)).resolves.toBe(0)
 
         await produceMessages(testTopic, [
             { value: 'message-1' },
@@ -279,7 +279,7 @@ describe("pendingMessagesByGroup", () => {
             { value: 'message-3' },
         ])
 
-        expect(await spiedTopic.pendingMessagesByGroup(testGroup)).toBe(3)
+        await expect(spiedTopic.pendingMessagesByGroup(testGroup)).resolves.toBe(3)
 
         //init consumer
         const consumer = kafka.consumer({ groupId: testGroup, ...CONSUMER_TIMEOUT_DEFAULTS })
@@ -292,7 +292,7 @@ describe("pendingMessagesByGroup", () => {
             expect(handleMessage).toHaveBeenCalledTimes(3);
         })
 
-        expect(await spiedTopic.pendingMessagesByGroup(testGroup)).toBe(0)
+        await expect(spiedTopic.pendingMessagesByGroup(testGroup)).resolves.toBe(0)
         await consumer.disconnect()
     })
 })
