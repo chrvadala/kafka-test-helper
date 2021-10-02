@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals'
 import { Kafka, logLevel } from 'kafkajs'
-import { TopicSpy } from '.';
+import { KafkaTestHelper } from '.';
 import waitForExpect from "wait-for-expect"
 
 const KAFKA_SERVER = process.env.KAFKA_SERVER;
@@ -44,14 +44,14 @@ describe("setup", () => {
 
         await createTopic(testTopic)
 
-        const spiedTopic = new TopicSpy(kafka, testTopic)
-        await spiedTopic.setup()
+        const helper = new KafkaTestHelper(kafka, testTopic)
+        await helper.init()
     })
 
     it("should construct and setup the component when topic does NOT exist", async () => {
         const testTopic = randomString('topic')
-        const spiedTopic = new TopicSpy(kafka, testTopic)
-        await spiedTopic.setup()
+        const helper = new KafkaTestHelper(kafka, testTopic)
+        await helper.init()
     })
 
     it("should construct and setup the component, consumer group included", async () => {
@@ -63,8 +63,8 @@ describe("setup", () => {
         const consumer1 = kafka.consumer({ groupId: testGroup1 })
         await consumer1.subscribe({ topic: testTopic })
 
-        const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup1, testGroup2])
-        await spiedTopic.setup()
+        const helper = new KafkaTestHelper(kafka, testTopic, [testGroup1, testGroup2])
+        await helper.init()
 
         await consumer1.disconnect()
     })
@@ -74,12 +74,12 @@ describe("ensureTopicExists", () => {
     it("should create a new topic", async () => {
         const testTopic = randomString('topic')
 
-        const spiedTopic = new TopicSpy(kafka, testTopic)
+        const helper = new KafkaTestHelper(kafka, testTopic)
 
         await expect(admin.listTopics()).resolves
             .toEqual(expect.not.arrayContaining([testTopic]))
 
-        await spiedTopic.ensureTopicExists()
+        await helper.ensureTopicExists()
 
         await expect(admin.listTopics()).resolves
             .toEqual(expect.arrayContaining([testTopic]))
@@ -88,11 +88,11 @@ describe("ensureTopicExists", () => {
     it("should not fail, even if the topic already exists", async () => {
         const testTopic = randomString('topic')
 
-        const spiedTopic = new TopicSpy(kafka, testTopic)
+        const helper = new KafkaTestHelper(kafka, testTopic)
 
         await createTopic(testTopic)
 
-        await spiedTopic.ensureTopicExists()
+        await helper.ensureTopicExists()
 
         await expect(admin.listTopics()).resolves
             .toEqual(expect.arrayContaining([testTopic]))
@@ -108,8 +108,8 @@ describe("ensureTopicDeleted", () => {
         await expect(admin.listTopics()).resolves
             .toEqual(expect.arrayContaining([testTopic]))
 
-        const spiedTopic = new TopicSpy(kafka, testTopic)
-        await spiedTopic.ensureTopicDeleted()
+        const helper = new KafkaTestHelper(kafka, testTopic)
+        await helper.ensureTopicDeleted()
 
         await expect(admin.listTopics()).resolves
             .toEqual(expect.not.arrayContaining([testTopic]))
@@ -118,12 +118,12 @@ describe("ensureTopicDeleted", () => {
     it("should not fail, even if the topic does not exist", async () => {
         const testTopic = randomString('topic')
 
-        const spiedTopic = new TopicSpy(kafka, testTopic)
+        const helper = new KafkaTestHelper(kafka, testTopic)
 
         await expect(admin.listTopics()).resolves
             .toEqual(expect.not.arrayContaining([testTopic]))
 
-        await spiedTopic.ensureTopicDeleted()
+        await helper.ensureTopicDeleted()
     })
 })
 
@@ -136,7 +136,7 @@ describe("offsetDelta", () => {
         { a: "-1", b: "-1", expected: 0 },
         { a: "-1", b: "9007199254740991", expected: 9007199254740991 },
     ])("should calculate delta on ordered offsets ($a, $b)", ({ a, b, expected }) => {
-        expect(TopicSpy.offsetDelta(a, b)).toBe(expected)
+        expect(KafkaTestHelper.offsetDelta(a, b)).toBe(expected)
     })
 
     it.each([
@@ -146,7 +146,7 @@ describe("offsetDelta", () => {
         { a: "-2", b: "-2", error: "Invalid offsets" },
     ])("should throw error $error with offsets ($a, $b)", ({ a, b, error }) => {
         function exec() {
-            TopicSpy.offsetDelta(a, b)
+            KafkaTestHelper.offsetDelta(a, b)
         }
         expect(exec).toThrow(error)
     })
@@ -165,10 +165,10 @@ describe("producedMessages", () => {
             { value: 'message-2' },
         ])
 
-        const spiedTopic = new TopicSpy(kafka, testTopic)
-        await spiedTopic.setup()
+        const helper = new KafkaTestHelper(kafka, testTopic)
+        await helper.init()
 
-        await expect(spiedTopic.producedMessages()).resolves.toBe(0)
+        await expect(helper.producedMessages()).resolves.toBe(0)
 
         await produceMessages(testTopic, [
             { value: 'message-3' },
@@ -176,7 +176,7 @@ describe("producedMessages", () => {
             { value: 'message-5' },
         ])
 
-        await expect(spiedTopic.producedMessages()).resolves.toBe(3)
+        await expect(helper.producedMessages()).resolves.toBe(3)
     })
 
     it.todo("should work when the topic is created after setup")
@@ -209,9 +209,9 @@ describe("consumedMessagesByGroup", () => {
             expect(handleMessage).toHaveBeenCalledTimes(3);
         })
 
-        const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
-        await spiedTopic.setup()
-        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(0)
+        const helper = new KafkaTestHelper(kafka, testTopic, [testGroup])
+        await helper.init()
+        await expect(helper.consumedMessagesByGroup(testGroup)).resolves.toBe(0)
         await produceMessages(testTopic, [
             { value: 'message-4' },
             { value: 'message-5' },
@@ -221,7 +221,7 @@ describe("consumedMessagesByGroup", () => {
             expect(handleMessage).toHaveBeenCalledTimes(5);
         })
 
-        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(2)
+        await expect(helper.consumedMessagesByGroup(testGroup)).resolves.toBe(2)
         await consumer.disconnect()
     })
 
@@ -233,9 +233,9 @@ describe("consumedMessagesByGroup", () => {
         await createTopic(testTopic)
 
         //setup
-        const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
-        await spiedTopic.setup()
-        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(0)
+        const helper = new KafkaTestHelper(kafka, testTopic, [testGroup])
+        await helper.init()
+        await expect(helper.consumedMessagesByGroup(testGroup)).resolves.toBe(0)
 
         //init consumer
         const consumer = kafka.consumer({ groupId: testGroup, ...CONSUMER_TIMEOUT_DEFAULTS })
@@ -255,7 +255,7 @@ describe("consumedMessagesByGroup", () => {
             expect(handleMessage).toHaveBeenCalledTimes(3);
         })
 
-        await expect(spiedTopic.consumedMessagesByGroup(testGroup)).resolves.toBe(3)
+        await expect(helper.consumedMessagesByGroup(testGroup)).resolves.toBe(3)
         await consumer.disconnect()
     })
 })
@@ -268,10 +268,10 @@ describe("pendingMessagesByGroup", () => {
 
         await createTopic(testTopic)
 
-        const spiedTopic = new TopicSpy(kafka, testTopic, [testGroup])
-        await spiedTopic.setup()
+        const helper = new KafkaTestHelper(kafka, testTopic, [testGroup])
+        await helper.init()
 
-        await expect(spiedTopic.pendingMessagesByGroup(testGroup)).resolves.toBe(0)
+        await expect(helper.pendingMessagesByGroup(testGroup)).resolves.toBe(0)
 
         await produceMessages(testTopic, [
             { value: 'message-1' },
@@ -279,7 +279,7 @@ describe("pendingMessagesByGroup", () => {
             { value: 'message-3' },
         ])
 
-        await expect(spiedTopic.pendingMessagesByGroup(testGroup)).resolves.toBe(3)
+        await expect(helper.pendingMessagesByGroup(testGroup)).resolves.toBe(3)
 
         //init consumer
         const consumer = kafka.consumer({ groupId: testGroup, ...CONSUMER_TIMEOUT_DEFAULTS })
@@ -292,7 +292,7 @@ describe("pendingMessagesByGroup", () => {
             expect(handleMessage).toHaveBeenCalledTimes(3);
         })
 
-        await expect(spiedTopic.pendingMessagesByGroup(testGroup)).resolves.toBe(0)
+        await expect(helper.pendingMessagesByGroup(testGroup)).resolves.toBe(0)
         await consumer.disconnect()
     })
 })
@@ -307,11 +307,11 @@ describe("messages and messageCount", () => {
             { value: 'message-z' },
         ])
 
-        const spiedTopic = new TopicSpy(kafka, testTopic)
-        await spiedTopic.setup()
+        const helper = new KafkaTestHelper(kafka, testTopic)
+        await helper.init()
 
-        await expect(spiedTopic.messageCount()).resolves.toBe(0)
-        await expect(spiedTopic.messages()).resolves.toHaveLength(0)
+        await expect(helper.messageCount()).resolves.toBe(0)
+        await expect(helper.messages()).resolves.toHaveLength(0)
 
         await produceMessages(testTopic, [
             { value: 'message-1' },
@@ -319,8 +319,8 @@ describe("messages and messageCount", () => {
             { value: 'message-3' },
         ])
         
-        await expect(spiedTopic.messageCount()).resolves.toBe(3)
-        await expect(spiedTopic.messages()).resolves.toEqual([
+        await expect(helper.messageCount()).resolves.toBe(3)
+        await expect(helper.messages()).resolves.toEqual([
             { headers: {}, partition: 0, value: Buffer.from('message-1') },
             { headers: {}, partition: 0, value: Buffer.from('message-2') },
             { headers: {}, partition: 0, value: Buffer.from('message-3') },
@@ -331,8 +331,8 @@ describe("messages and messageCount", () => {
             { value: 'message-5' },
         ])
 
-        await expect(spiedTopic.messageCount()).resolves.toBe(5)
-        await expect(spiedTopic.messages()).resolves.toEqual([
+        await expect(helper.messageCount()).resolves.toBe(5)
+        await expect(helper.messages()).resolves.toEqual([
             { headers: {}, partition: 0, value: Buffer.from('message-1') },
             { headers: {}, partition: 0, value: Buffer.from('message-2') },
             { headers: {}, partition: 0, value: Buffer.from('message-3') },

@@ -3,9 +3,6 @@ const PARTITION_COUNT_DIFFERENCE_ERROR = "The number of partion can't change aft
 const TOPIC_NOT_INITIALIZED = "This topic has not been initialized. Please call ensureTopic()"
 const GROUP_NOT_INITIALIZED = "This consumer has not been initialized. Please call ensureTopic()"
 
-export async function spyTopic(kafka, topic, groupIds = []) {
-    return new TopicSpy(kafka, topic, groupIds)
-}
 
 const GROUP_ID_PREFIX = 'kafka-test-helper-'
 const CONSUMER_TIMEOUT_DEFAULTS = {
@@ -15,7 +12,12 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
     maxWaitTimeInMs: 100,
 }
 
-export class TopicSpy {
+export default async function initKafkaTestHelper(kafka, topic, groupIds = []) {
+    const helper = new KafkaTestHelper(kafka, topic, groupIds)
+    await helper.init()
+    return helper
+}
+export class KafkaTestHelper {
     #kafka; #topic; #groupIds;
 
     #topicOffsets = null;
@@ -27,7 +29,7 @@ export class TopicSpy {
         this.#groupIds = groupIds;
     }
 
-    async setup() {
+    async init() {
         const admin = await this.#getAdmin()
 
         if (await this.#topicExists(admin)) {
@@ -83,7 +85,7 @@ export class TopicSpy {
 
         let tot = 0;
         for (let i = 0; i < this.#topicOffsets.length; i++) {
-            tot += TopicSpy.offsetDelta(this.#topicOffsets[i].offset, topicOffsets[i].offset)
+            tot += KafkaTestHelper.offsetDelta(this.#topicOffsets[i].offset, topicOffsets[i].offset)
         }
 
         await admin.disconnect()
@@ -97,7 +99,7 @@ export class TopicSpy {
         const curTopicOffsets = await admin.fetchTopicOffsets(this.#topic)
         let delta = 0;
         for (let i = 0; i < this.#topicOffsets.length; i++) {
-            delta += TopicSpy.offsetDelta(
+            delta += KafkaTestHelper.offsetDelta(
                 this.#topicOffsets[i].offset,
                 curTopicOffsets[i].offset
             )
@@ -169,7 +171,7 @@ export class TopicSpy {
 
         let delta = 0;
         for (let i = 0; i < oldGroupTopicOffsets.length; i++) {
-            delta += TopicSpy.offsetDelta(
+            delta += KafkaTestHelper.offsetDelta(
                 oldGroupTopicOffsets[i].offset,
                 currentGroupTopicOffsets[i].offset
             )
@@ -197,7 +199,7 @@ export class TopicSpy {
 
        let delta = 0;
         for (let i = 0; i < currentGroupTopicOffsets.length; i++) {
-            delta += TopicSpy.offsetDelta(
+            delta += KafkaTestHelper.offsetDelta(
                 currentGroupTopicOffsets[i].offset,
                 topicOffsets[i].offset
             )
