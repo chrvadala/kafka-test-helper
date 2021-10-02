@@ -220,9 +220,21 @@ export class TopicSpy {
     }
 
     static offsetDelta(offset1, offset2) {
-        const n1 = Number(offset1)
-        const n2 = Number(offset2)
-        if(n1 < 0 && n2 >= 0 ) return n2
-        return n2 - n1
+        const n1 = BigInt(offset1)
+        const n2 = BigInt(offset2)
+
+        if (n1 < -1n || n2 < -1n) {
+            throw new Error("Invalid offsets")
+        }
+
+        const delta = (n1 < 0n && n2 >= 0n)
+            ? n2
+            : n2 - n1
+
+        if (!Number.isSafeInteger(Number(delta)) || n1 > n2) {
+            throw new Error("Unsupported offsets")
+        }
+
+        return Number(delta)
     }
 }

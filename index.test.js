@@ -128,11 +128,29 @@ describe("ensureTopicDeleted", () => {
 })
 
 describe("offsetDelta", () => {
-    it("should calculate delta on ordered offsets", () => {
-        expect(TopicSpy.offsetDelta("4", "4")).toBe(0)
-        expect(TopicSpy.offsetDelta("4", "5")).toBe(1)
-        expect(TopicSpy.offsetDelta("100", "200")).toBe(100)
+    it.each([
+        { a: "4", b: "4", expected: 0 },
+        { a: "4", b: "5", expected: 1 },
+        { a: "100", b: "200", expected: 100 },
+        { a: "0", b: "200", expected: 200 },
+        { a: "-1", b: "-1", expected: 0 },
+        { a: "-1", b: "9007199254740991", expected: 9007199254740991 },
+    ])("should calculate delta on ordered offsets ($a, $b)", ({ a, b, expected }) => {
+        expect(TopicSpy.offsetDelta(a, b)).toBe(expected)
     })
+
+    it.each([
+        { a: "0", b: "9007199254740992", error: "Unsupported offsets" },
+        { a: "100", b: "0", error: "Unsupported offsets" },
+        { a: "-2", b: "100", error: "Invalid offsets" },
+        { a: "-2", b: "-2", error: "Invalid offsets" },
+    ])("should throw error $error with offsets ($a, $b)", ({ a, b, error }) => {
+        function exec() {
+            TopicSpy.offsetDelta(a, b)
+        }
+        expect(exec).toThrow(error)
+    })
+
     it.todo("should calculate delta after an offset overflow")
 })
 
