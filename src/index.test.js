@@ -1,6 +1,6 @@
 import { expect, beforeAll, test } from '@jest/globals'
 import kafkaTestHelper from './index.js'
-import {getKafka} from './_testUtils.js'
+import { getKafka } from './_testUtils.js'
 
 const random = () => Math.round(Math.random() * 100_000)
 
