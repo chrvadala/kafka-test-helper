@@ -297,7 +297,7 @@ describe("pendingMessagesByGroup", () => {
     })
 })
 
-describe("messages and messageCount", () => {
+describe.only("messages and messageCount", () => {
     it("should return produced messages", async () => {
         const testTopic = randomString('topic')
 
@@ -340,6 +340,77 @@ describe("messages and messageCount", () => {
             { headers: {}, partition: 0, value: Buffer.from('message-5') },
         ])
 
+    })
+
+    //unsupported case
+    it.skip("should return produced messages, even in the context of a commited transaction", async () => {
+        const testTopic = randomString('topic')
+
+        await produceMessages(testTopic, [
+            { value: 'message-x' },
+            { value: 'message-y' },
+            { value: 'message-z' },
+        ])
+
+        const helper = new KafkaTestHelper(kafka, testTopic)
+        await helper.init()
+
+        await expect(helper.messageCount()).resolves.toBe(0)
+        await expect(helper.messages()).resolves.toHaveLength(0)
+        
+        const producer = kafka.producer({transactionalId: "tx-test123"})
+        await producer.connect()
+        const transaction = await producer.transaction()
+        await transaction.send({
+            topic: testTopic,
+            messages: [
+                { value: 'message-1' },
+                { value: 'message-2' },
+                { value: 'message-3' },
+            ],
+        })
+        await transaction.commit()
+        await producer.disconnect()
+
+        await expect(helper.messageCount()).resolves.toBe(3)
+        await expect(helper.messages()).resolves.toEqual([
+            { headers: {}, partition: 0, value: Buffer.from('message-1') },
+            { headers: {}, partition: 0, value: Buffer.from('message-2') },
+            { headers: {}, partition: 0, value: Buffer.from('message-3') },
+        ])
+    })
+
+    //unsupported case
+    it.skip("should return produced messages, even in the context of an aborted transaction", async () => {
+        const testTopic = randomString('topic')
+
+        await produceMessages(testTopic, [
+            { value: 'message-x' },
+            { value: 'message-y' },
+            { value: 'message-z' },
+        ])
+
+        const helper = new KafkaTestHelper(kafka, testTopic)
+        await helper.init()
+
+        await expect(helper.messageCount()).resolves.toBe(0)
+        await expect(helper.messages()).resolves.toHaveLength(0)
+        
+        const producer = kafka.producer({transactionalId: "tx-test123"})
+        await producer.connect()
+        const transaction = await producer.transaction()
+        await transaction.send({
+            topic: testTopic,
+            messages: [
+                { value: 'message-1' },
+                { value: 'message-2' },
+                { value: 'message-3' },
+            ],
+        })
+        await transaction.abort()
+        await producer.disconnect()
+
+        await expect(helper.messageCount()).resolves.toBe(0)
     })
 })
 
