@@ -8,6 +8,7 @@ export function makePlaceholderMessages(uuid, partions) {
             partition: i,
             value: JSON.stringify({
                 [WHAT_IS_THAT_MESSAGE_KEY]: WHAT_IS_THAT_MESSAGE_VALUE,
+                'kafka_test_helper': 'yes',
                 uuid
             })
         })
@@ -16,18 +17,32 @@ export function makePlaceholderMessages(uuid, partions) {
     return messages;
 }
 
-export function isPlaceholderMessageWithUUID(message, uuid) {
-    let json;
+export function isPlaceholderMessage(message) {
+    const json = tryToExtractValueFromMessage(message)
 
-    try{
-        json=JSON.parse(message)
-    }catch{
-        return false
-    }
+    if(!json) return false
 
     return typeof json === 'object' 
         && json !== null 
-        && json.hasOwnProperty('uuid')
-         && json.uuid === uuid
+        && json.hasOwnProperty('kafka_test_helper')
 }
 
+export function isPlaceholderMessageWithUUID(message, uuid) {
+    const json = tryToExtractValueFromMessage(message)
+
+    if(!json) return false
+
+    return typeof json === 'object' 
+        && json !== null 
+        && json.hasOwnProperty('kafka_test_helper')
+        && json.hasOwnProperty('uuid')
+        && json.uuid === uuid
+}
+
+function tryToExtractValueFromMessage(message){
+    try{
+        return JSON.parse(message.value)
+    }catch{
+        return false
+    }
+}

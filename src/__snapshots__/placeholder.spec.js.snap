@@ -4,19 +4,19 @@ exports[`placeholder makePlaceholderMessages 1`] = `
 Array [
   Object {
     "partition": 0,
-    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"uuid\\":\\"test123\\"}",
+    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"kafka_test_helper\\":\\"yes\\",\\"uuid\\":\\"test123\\"}",
   },
   Object {
     "partition": 1,
-    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"uuid\\":\\"test123\\"}",
+    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"kafka_test_helper\\":\\"yes\\",\\"uuid\\":\\"test123\\"}",
   },
   Object {
     "partition": 2,
-    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"uuid\\":\\"test123\\"}",
+    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"kafka_test_helper\\":\\"yes\\",\\"uuid\\":\\"test123\\"}",
   },
   Object {
     "partition": 3,
-    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"uuid\\":\\"test123\\"}",
+    "value": "{\\"what_is_that_message\\":\\"https://github.com/chrvadala/kafka-test-helper\\",\\"kafka_test_helper\\":\\"yes\\",\\"uuid\\":\\"test123\\"}",
   },
 ]
 `;
