@@ -1,3 +1,3 @@
 export default {
-    //no config
+    transform: {}
 }
