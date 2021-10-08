@@ -1,4 +1,4 @@
-import {getKafka} from './_testUtils.js'
+import { getKafka } from './_testUtils.js'
 import { describe, expect, it, beforeAll, afterAll } from '@jest/globals'
 import KafkaTestHelper from './KafkaTestHelper.js'
 
@@ -120,9 +120,9 @@ describe('messages', () => {
     ])
 
     await expect(helper.messages()).resolves.toEqual([
-      { headers: {}, partition: 0, value: Buffer.from('message-1') },
-      { headers: {}, partition: 0, value: Buffer.from('message-2') },
-      { headers: {}, partition: 0, value: Buffer.from('message-3') }
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-1') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-2') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-3') })
     ])
 
     // wave 2
@@ -131,11 +131,11 @@ describe('messages', () => {
       { value: 'message-5' }
     ])
     await expect(helper.messages()).resolves.toEqual([
-      { headers: {}, partition: 0, value: Buffer.from('message-1') },
-      { headers: {}, partition: 0, value: Buffer.from('message-2') },
-      { headers: {}, partition: 0, value: Buffer.from('message-3') },
-      { headers: {}, partition: 0, value: Buffer.from('message-4') },
-      { headers: {}, partition: 0, value: Buffer.from('message-5') }
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-1') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-2') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-3') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-4') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-5') })
     ])
   })
 
@@ -171,9 +171,9 @@ describe('messages', () => {
 
     // verify
     await expect(helper.messages()).resolves.toEqual([
-      { headers: {}, partition: 0, value: Buffer.from('message-1') },
-      { headers: {}, partition: 0, value: Buffer.from('message-2') },
-      { headers: {}, partition: 0, value: Buffer.from('message-3') }
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-1') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-2') }),
+      expect.objectContaining({ headers: {}, partition: 0, buffer: Buffer.from('message-3') })
     ])
   })
 
@@ -235,11 +235,11 @@ describe('messages', () => {
     ])
 
     const messages1 = await helper.messages()
-    await expect(messages1).toHaveLength(3)
-    await expect(messages1).toEqual(expect.arrayContaining([
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-1') },
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-2') },
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-3') }
+    expect(messages1).toHaveLength(3)
+    expect(messages1).toEqual(expect.arrayContaining([
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-1') }),
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-2') }),
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-3') })
     ]))
 
     // wave 2
@@ -248,14 +248,47 @@ describe('messages', () => {
       { value: 'message-5' }
     ])
     const messages2 = await helper.messages()
-    await expect(messages2).toHaveLength(5)
-    await expect(messages2).toEqual(expect.arrayContaining([
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-1') },
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-2') },
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-3') },
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-4') },
-      { headers: {}, partition: expect.any(Number), value: Buffer.from('message-5') }
+    expect(messages2).toHaveLength(5)
+    expect(messages2).toEqual(expect.arrayContaining([
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-1') }),
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-2') }),
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-3') }),
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-4') }),
+      expect.objectContaining({ headers: {}, partition: expect.any(Number), buffer: Buffer.from('message-5') })
     ]))
+  })
+
+  it('should decode json and string', async () => {
+    const testTopic = randomString('topic')
+
+    // emulate topic with some previous messages
+    await produceMessages(testTopic, [
+      { value: 'message-x' },
+      { value: 'message-y' },
+      { value: 'message-z' }
+    ])
+
+    // init lib
+    const helper = new KafkaTestHelper(kafka, testTopic)
+    await helper.reset()
+    await expect(helper.messages()).resolves.toHaveLength(0)
+
+    // wave 1
+    await produceMessages(testTopic, [
+      { value: JSON.stringify({ bar: 42 }) },
+      { value: 'hellohello' },
+      { value: 'not_a_{{{{_json' },
+      { value: Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5]) }
+    ])
+
+    const messages1 = await helper.messages()
+    expect(messages1).toHaveLength(4)
+    expect(messages1).toEqual([
+      expect.objectContaining({ json: { bar: 42 } }),
+      expect.objectContaining({ string: 'hellohello', json: null }),
+      expect.objectContaining({ string: 'not_a_{{{{_json', json: null }),
+      expect.objectContaining({ buffer: Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5]) })
+    ])
   })
 })
 

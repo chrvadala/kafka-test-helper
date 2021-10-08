@@ -83,7 +83,9 @@ export default class KafkaTestHelper {
           messages.push({
             partition,
             headers: message.headers,
-            value: message.value
+            buffer: message.value,
+            json: _tryToConvertBufferToJson(message.value),
+            string: _tryToConvertBufferToString(message.value)
           })
         }
 
@@ -127,5 +129,21 @@ export default class KafkaTestHelper {
     const topics = await admin.listTopics()
     const exists = topics.includes(this._topic)
     return exists
+  }
+}
+
+function _tryToConvertBufferToJson (buffer) {
+  try {
+    return JSON.parse(buffer.toString())
+  } catch (e) {
+    return null
+  }
+}
+
+function _tryToConvertBufferToString (buffer) {
+  try {
+    return buffer.toString()
+  } catch (e) {
+    return null
   }
 }
