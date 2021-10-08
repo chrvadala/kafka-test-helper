@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeAll, afterAll } from '@jest/globals'
 import { Kafka, logLevel } from 'kafkajs'
-import { KafkaTestHelper } from './KafkaTestHelper.js'
+import KafkaTestHelper from './KafkaTestHelper.js'
 
 const KAFKA_SERVER = process.env.KAFKA_SERVER
 if (!KAFKA_SERVER) {

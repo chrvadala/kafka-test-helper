@@ -10,7 +10,7 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
 
 const random = () => Math.round(Math.random() * 100_000)
 
-export class KafkaTestHelper {
+export default class KafkaTestHelper {
   constructor (kafka, topic) {
     this._kafka = kafka
     this._topic = topic
