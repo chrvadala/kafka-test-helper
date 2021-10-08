@@ -13,10 +13,10 @@
   },
   "devDependencies": {
     "jest": "^27.2.1",
-    "standard": "^16.0.4"
+    "standard": "^16.0.4",
+    "kafkajs": "^1.15.0"
   },
-  "dependencies": {
-    "kafkajs": "^1.15.0",
-    "wait-for-expect": "^3.0.2"
+  "peerDependencies": {
+    "kafkajs": "^1.15.0"
   }
 }
