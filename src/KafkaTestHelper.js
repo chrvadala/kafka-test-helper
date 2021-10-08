@@ -119,6 +119,29 @@ export default class KafkaTestHelper {
     return messages
   }
 
+  async publishMessages (messages) {
+    const txMessages = []
+    let outcome
+    for (const message of messages) {
+      outcome = {
+        value: message.buffer
+      }
+      if (message.string) outcome.value = message.string
+      if (message.json) outcome.value = JSON.stringify(message.json)
+      if (message.key) outcome.key = message.key
+      if (message.partition) outcome.partition = message.partition
+      txMessages.push(outcome)
+    }
+
+    const producer = this._kafka.producer()
+    await producer.connect()
+    await producer.send({
+      topic: this._topic,
+      messages: txMessages
+    })
+    await producer.disconnect()
+  }
+
   async _getAdmin () {
     const admin = this._kafka.admin()
     await admin.connect()

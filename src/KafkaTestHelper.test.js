@@ -2,10 +2,11 @@ import { getKafka } from './_testUtils.js'
 import { describe, expect, it, beforeAll, afterAll } from '@jest/globals'
 import KafkaTestHelper from './KafkaTestHelper.js'
 
-const KAFKA_SERVER = process.env.KAFKA_SERVER
-if (!KAFKA_SERVER) {
-  console.error('KAFKA_SERVER environment variable not found')
-  process.exit(1)
+const CONSUMER_TIMEOUT_DEFAULTS = {
+  sessionTimeout: 10_000,
+  rebalanceTimeout: 12_000,
+  heartbeatInterval: 500,
+  maxWaitTimeInMs: 100
 }
 
 let kafka, admin
@@ -289,6 +290,83 @@ describe('messages', () => {
       expect.objectContaining({ string: 'not_a_{{{{_json', json: null }),
       expect.objectContaining({ buffer: Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5]) })
     ])
+  })
+})
+
+describe('publishMessages', () => {
+  it('should populate a topic', async () => {
+    const testTopic = randomString('topic')
+    const groupId = randomString('group')
+    await createTopic(testTopic, 4)
+
+    const json = { json: { hello: 42, ciao: 42 } }
+    const string = { string: 'hello_42' }
+    const buffer = { buffer: Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5]) }
+    const advancedKafkaFeatures = { key: 'key123', partition: 1, buffer: Buffer.from([0x42]) }
+
+    const messages = [
+      json,
+      string,
+      buffer,
+      advancedKafkaFeatures
+    ]
+
+    const helper = new KafkaTestHelper(kafka, testTopic)
+    await helper.reset()
+    await helper.publishMessages(messages)
+
+    // download messages
+    const recvMessages = []
+    const consumer = kafka.consumer({
+      groupId,
+      ...CONSUMER_TIMEOUT_DEFAULTS
+    })
+    await consumer.connect()
+    await consumer.subscribe({ topic: testTopic, fromBeginning: true })
+    await new Promise((resolve) => {
+      consumer.run({
+        eachMessage: ({ partition, message }) => {
+          recvMessages.push({
+            partition,
+            key: message.key,
+            headers: message.headers,
+            value: message.value
+          })
+          if (recvMessages.length >= messages.length) resolve()
+        }
+      })
+    })
+
+    // verify
+    expect(recvMessages).toHaveLength(messages.length)
+    expect(recvMessages).toEqual(expect.arrayContaining([
+      {
+        partition: expect.any(Number),
+        key: null,
+        headers: expect.any(Object),
+        value: Buffer.from(JSON.stringify({ hello: 42, ciao: 42 }))
+      },
+      {
+        partition: expect.any(Number),
+        key: null,
+        headers: expect.any(Object),
+        value: Buffer.from('hello_42')
+      },
+      {
+        partition: expect.any(Number),
+        key: null,
+        headers: expect.any(Object),
+        value: Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5])
+      },
+      {
+        key: Buffer.from('key123'),
+        partition: 1,
+        headers: expect.any(Object),
+        value: Buffer.from([0x42])
+      }
+    ]))
+
+    await consumer.disconnect()
   })
 })
 
