@@ -1,3 +1,4 @@
 export default {
-  transform: {}
+  transform: {},
+  coveragePathIgnorePatterns: ['_testUtils.js']
 }

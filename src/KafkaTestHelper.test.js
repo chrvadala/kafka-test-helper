@@ -1,5 +1,5 @@
+import {getKafka} from './_testUtils.js'
 import { describe, expect, it, beforeAll, afterAll } from '@jest/globals'
-import { Kafka, logLevel } from 'kafkajs'
 import KafkaTestHelper from './KafkaTestHelper.js'
 
 const KAFKA_SERVER = process.env.KAFKA_SERVER
@@ -11,14 +11,7 @@ if (!KAFKA_SERVER) {
 let kafka, admin
 
 beforeAll(async () => {
-  kafka = new Kafka({
-    clientId: 'tester',
-    brokers: [KAFKA_SERVER],
-    logLevel: logLevel.ERROR,
-    retry: {
-      restartOnFailure: async () => false
-    }
-  })
+  kafka = getKafka()
 
   admin = kafka.admin()
   await admin.connect()
