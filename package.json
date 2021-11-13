@@ -7,9 +7,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "lint": "standard"
+    "test": "npm run test:standard && npm run test:jest",
+    "test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "test:standard": "standard"
   },
   "devDependencies": {
     "jest": "^27.2.1",
