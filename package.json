@@ -7,10 +7,11 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "npm run test:standard && npm run test:jest",
+    "test": "npm run test:standard && npm run test:waitForKafkaReady && npm run test:jest",
     "test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "test:standard": "standard"
+    "test:standard": "standard",
+    "test:waitForKafkaReady": "node ./waitForKafkaReady.js"
   },
   "devDependencies": {
     "jest": "^27.2.1",
