@@ -1,6 +1,6 @@
 import { getKafka } from './_testUtils.js'
 import { describe, expect, it, beforeAll, afterAll } from '@jest/globals'
-import KafkaTestHelper from './KafkaTestHelper.js'
+import KafkaTestHelper from '../src/KafkaTestHelper.js'
 
 const CONSUMER_TIMEOUT_DEFAULTS = {
   sessionTimeout: 10_000,

@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { makePlaceholderMessages, isPlaceholderMessage, isPlaceholderMessageWithUUID } from './placeholder.js'
+import { makePlaceholderMessages, isPlaceholderMessage, isPlaceholderMessageWithUUID } from '../src/placeholder.js'
 
 const validPlaceholder = JSON.stringify({
   what_is_that_message: 'https://github.com/chrvadala/kafka-test-helper',
