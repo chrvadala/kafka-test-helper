@@ -38,6 +38,7 @@ export default class KafkaTestHelper {
           topic: this._topic
         }]
       })
+      await this.reset()
     }
     await admin.disconnect()
   }
