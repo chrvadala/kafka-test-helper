@@ -1,4 +1,5 @@
 import { makePlaceholderMessages, isPlaceholderMessage, isPlaceholderMessageWithUUID } from './placeholder.js'
+import { randomNumber, tryToConvertBufferToJson, tryToConvertBufferToString } from './utils.js'
 
 const GROUP_ID_PREFIX = 'kafka-test-helper-'
 const CONSUMER_TIMEOUT_DEFAULTS = {
@@ -7,8 +8,6 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
   heartbeatInterval: 500,
   maxWaitTimeInMs: 100
 }
-
-const random = () => Math.round(Math.random() * 100_000)
 
 /**
  * @typedef {Object} ConsumedMessage
@@ -108,8 +107,8 @@ export default class KafkaTestHelper {
    * ]
    */
   async messages () {
-    const uuid = 'placeholder-' + random()
-    const groupId = GROUP_ID_PREFIX + random()
+    const uuid = 'placeholder-' + randomNumber()
+    const groupId = GROUP_ID_PREFIX + randomNumber()
 
     const partitions = this._initialTopicOffsets.length
 
@@ -138,8 +137,8 @@ export default class KafkaTestHelper {
             partition,
             headers: message.headers,
             buffer: message.value,
-            json: _tryToConvertBufferToJson(message.value),
-            string: _tryToConvertBufferToString(message.value)
+            json: tryToConvertBufferToJson(message.value),
+            string: tryToConvertBufferToString(message.value)
           })
         }
 
@@ -260,21 +259,5 @@ export default class KafkaTestHelper {
     const topics = await admin.listTopics()
     const exists = topics.includes(this._topic)
     return exists
-  }
-}
-
-function _tryToConvertBufferToJson (buffer) {
-  try {
-    return JSON.parse(buffer.toString())
-  } catch (e) {
-    return null
-  }
-}
-
-function _tryToConvertBufferToString (buffer) {
-  try {
-    return buffer.toString()
-  } catch (e) {
-    return null
   }
 }
