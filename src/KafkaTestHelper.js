@@ -10,13 +10,38 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
 
 const random = () => Math.round(Math.random() * 100_000)
 
+/**
+ * @typedef {Object} ConsumedMessage
+ * @property {Object} headers - Object with headers
+ * @property {number} partition - Partition number
+ * @property {Buffer} buffer - Buffer with message
+ * @property {Object} json - Object with message
+ * @property {string} string - String with message
+ */
+
+/**
+ * class representing a Kafka Test Helper
+ * @class KafkaTestHelper
+ * @example await KafkaTestHelper.init('topicName')
+ */
 export default class KafkaTestHelper {
+  /**
+   * Kafka Test Helper constructor
+   * @constructor
+   * @param {Kafka} kafka - Kafka client
+   * @param {string} topic - Topic name
+   */
   constructor (kafka, topic) {
     this._kafka = kafka
     this._topic = topic
     this._initialTopicOffsets = [] // e.g. [ { partition: 0, offset: '0', high: '0', low: '0' } ]
   }
 
+  /**
+   * Reset the helper to the current offset  read messages() function
+   * @function
+   * @example await helper.reset()
+   */
   async reset () {
     const admin = await this._getAdmin()
 
@@ -26,6 +51,12 @@ export default class KafkaTestHelper {
     await admin.disconnect()
   }
 
+  /**
+   * Create a topic if doesn't exist
+   * @function
+   * @param {number} [timeout = 5000] - Timeout in ms
+   * @example await helper.ensureTopicExists()
+   */
   async ensureTopicExists (timeout = null) {
     const admin = await this._getAdmin()
 
@@ -43,6 +74,12 @@ export default class KafkaTestHelper {
     await admin.disconnect()
   }
 
+  /**
+   * Delete a topic if exists
+   * @function
+   * @param {number} [timeout = 5000] - Timeout in ms
+   * @example await helper.ensureTopicDeleted()
+   */
   async ensureTopicDeleted (timeout = null) {
     const admin = await this._getAdmin()
     if (await this._topicExists(admin)) {
@@ -54,6 +91,22 @@ export default class KafkaTestHelper {
     await admin.disconnect()
   }
 
+  /**
+   * Returns a list of messages published to the topic from last helper reset
+   * @function
+   * @returns {ConsumedMessage[]}
+   * @example const msgs = await helper.messages()
+   * [
+   *  {
+   *     headers: {}
+   *     partition: 0,
+   *     buffer: <Buffer 7b 22 62 61 72 22 3a 34 32 7d>,
+   *     json: { "bar": 42 },
+   *     string: '{"bar":42}',
+   *  },
+   *  ...
+   * ]
+   */
   async messages () {
     const uuid = 'placeholder-' + random()
     const groupId = GROUP_ID_PREFIX + random()
@@ -120,6 +173,47 @@ export default class KafkaTestHelper {
     return messages
   }
 
+  /**
+   * Publish a list of messages to the topic
+   * @function
+   * @param {Object[]} messages - List of messages to publish
+   * @param {number} [messages[].partition] - Partition id
+   * @param {string} [messages[].key] - Message key
+   * @param {string} [messages[].string] - Message value as string
+   * @param {string} [messages[].json] - Message value as object and serialized with JSON.stringify()
+   * @param {Buffer} [messages[].buffer] - Message value as Buffer
+   *
+   * @example
+   * await helper.publishMessages([
+   *  {
+   *    partition: 0,
+   *    key: 'key1',
+   *    string: "hello world",
+   *  },
+   * ...
+   * ])
+   *
+   * @example
+   * await helper.publishMessages([
+   *  {
+   *    partition: 0,
+   *    key: 'key1',
+   *    json: { "foo": "bar" },
+   *  },
+   * ...
+   * ])
+   *
+   * @example
+   * await helper.publishMessages([
+   *  {
+   *    partition: 0,
+   *    key: 'key1',
+   *    buffer: Buffer.from('hello world')
+   *  },
+   * ...
+   * ])
+
+   */
   async publishMessages (messages) {
     const txMessages = []
     let outcome
@@ -143,12 +237,25 @@ export default class KafkaTestHelper {
     await producer.disconnect()
   }
 
+  /**
+   * Gets the admin client
+   * @function
+   * @ignore
+   * @returns {Kafka.Admin}
+   */
   async _getAdmin () {
     const admin = this._kafka.admin()
     await admin.connect()
     return admin
   }
 
+  /**
+   * Validates if the topic exists
+   * @function
+   * @ignore
+   * @param {Kafka.Admin} Kafka admin client
+   * @returns {boolean}
+   */
   async _topicExists (admin) {
     const topics = await admin.listTopics()
     const exists = topics.includes(this._topic)
