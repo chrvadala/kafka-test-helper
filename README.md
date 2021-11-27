@@ -21,8 +21,7 @@ You can use Kafka test helper in conjunction with your preferred testing library
 
 # Documentation
 - [Architecture](./docs/architecture)
-- [Methods](./docs/documentation#methods)
-
+- [APIs](./docs/api)
 
 # Install
 ```sh

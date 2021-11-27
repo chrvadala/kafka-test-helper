@@ -10,18 +10,8 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
 }
 
 /**
- * @typedef {Object} ConsumedMessage
- * @property {Object} headers - Object with headers
- * @property {number} partition - Partition number
- * @property {Buffer} buffer - Buffer with message
- * @property {Object} json - Object with message
- * @property {string} string - String with message
- */
-
-/**
  * class representing a Kafka Test Helper
  * @class KafkaTestHelper
- * @example await KafkaTestHelper.init('topicName')
  */
 export default class KafkaTestHelper {
   /**
@@ -37,7 +27,7 @@ export default class KafkaTestHelper {
   }
 
   /**
-   * Reset the helper to the current offset  read messages() function
+   * Resets the helper to the current offset
    * @function
    * @example await helper.reset()
    */
@@ -51,7 +41,7 @@ export default class KafkaTestHelper {
   }
 
   /**
-   * Create a topic if doesn't exist
+   * Creates a topic if doesn't exist
    * @function
    * @param {number} [timeout = 5000] - Timeout in ms
    * @example await helper.ensureTopicExists()
@@ -74,7 +64,7 @@ export default class KafkaTestHelper {
   }
 
   /**
-   * Delete a topic if exists
+   * Deletes a topic if exists
    * @function
    * @param {number} [timeout = 5000] - Timeout in ms
    * @example await helper.ensureTopicDeleted()
@@ -89,6 +79,15 @@ export default class KafkaTestHelper {
     }
     await admin.disconnect()
   }
+
+  /**
+   * @typedef {Object} ConsumedMessage
+   * @property {Object} headers - Object with headers
+   * @property {number} partition - Partition number
+   * @property {Buffer} buffer - Buffer with message
+   * @property {Object} json - Object with message
+   * @property {string} string - String with message
+   */
 
   /**
    * Returns a list of messages published to the topic from last helper reset
@@ -173,7 +172,7 @@ export default class KafkaTestHelper {
   }
 
   /**
-   * Publish a list of messages to the topic
+   * Publishes a list of messages to the topic
    * @function
    * @param {Object[]} messages - List of messages to publish
    * @param {number} [messages[].partition] - Partition id

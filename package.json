@@ -12,7 +12,7 @@
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "test:standard": "standard",
     "test:waitForKafkaReady": "node ./waitForKafkaReady.js",
-    "docs:api": "jsdoc2md --template docs/_api.md.template.hbs --example-lang js --heading-depth 3 src/KafkaTestHelper.js > docs/api.md",
+    "docs:api": "jsdoc2md --template docs/templates/api.hbs --example-lang js --heading-depth 2 src/KafkaTestHelper.js > docs/api.md",
     "build": "npm run docs:api"
   },
   "devDependencies": {

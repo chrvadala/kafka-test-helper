@@ -9,59 +9,54 @@
 <!-------------------------------------------------------------------->
 
 # Kafka Test Helper APIs
-## Index
-### Classes
+## Classes
 
 <dl>
 <dt><a href="#KafkaTestHelper">KafkaTestHelper</a></dt>
 <dd></dd>
 </dl>
 
-### Functions
+## Functions
 
 <dl>
 <dt><a href="#reset">reset()</a></dt>
-<dd><p>Reset the helper to the current offset  read messages() function</p>
+<dd><p>Resets the helper to the current offset</p>
 </dd>
 <dt><a href="#ensureTopicExists">ensureTopicExists([timeout])</a></dt>
-<dd><p>Create a topic if doesn&#39;t exist</p>
+<dd><p>Creates a topic if doesn&#39;t exist</p>
 </dd>
 <dt><a href="#ensureTopicDeleted">ensureTopicDeleted([timeout])</a></dt>
-<dd><p>Delete a topic if exists</p>
+<dd><p>Deletes a topic if exists</p>
 </dd>
 <dt><a href="#messages">messages()</a> ⇒ <code><a href="#ConsumedMessage">Array.&lt;ConsumedMessage&gt;</a></code></dt>
 <dd><p>Returns a list of messages published to the topic from last helper reset</p>
 </dd>
 <dt><a href="#publishMessages">publishMessages(messages)</a></dt>
-<dd><p>Publish a list of messages to the topic</p>
+<dd><p>Publishes a list of messages to the topic</p>
 </dd>
 </dl>
 
-### Typedefs
+## Typedefs
 
 <dl>
 <dt><a href="#ConsumedMessage">ConsumedMessage</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
 
-## Specs
+# Specs
 <a name="KafkaTestHelper"></a>
 
-### KafkaTestHelper
+## KafkaTestHelper
 **Kind**: global class  
 <a name="new_KafkaTestHelper_new"></a>
 
-#### new KafkaTestHelper()
+### new KafkaTestHelper()
 class representing a Kafka Test Helper
 
-**Example**  
-```js
-await KafkaTestHelper.init('topicName')
-```
 <a name="reset"></a>
 
-### reset()
-Reset the helper to the current offset  read messages() function
+## reset()
+Resets the helper to the current offset
 
 **Kind**: global function  
 **Example**  
@@ -70,8 +65,8 @@ await helper.reset()
 ```
 <a name="ensureTopicExists"></a>
 
-### ensureTopicExists([timeout])
-Create a topic if doesn't exist
+## ensureTopicExists([timeout])
+Creates a topic if doesn't exist
 
 **Kind**: global function  
 
@@ -85,8 +80,8 @@ await helper.ensureTopicExists()
 ```
 <a name="ensureTopicDeleted"></a>
 
-### ensureTopicDeleted([timeout])
-Delete a topic if exists
+## ensureTopicDeleted([timeout])
+Deletes a topic if exists
 
 **Kind**: global function  
 
@@ -100,7 +95,7 @@ await helper.ensureTopicDeleted()
 ```
 <a name="messages"></a>
 
-### messages() ⇒ [<code>Array.&lt;ConsumedMessage&gt;</code>](#ConsumedMessage)
+## messages() ⇒ [<code>Array.&lt;ConsumedMessage&gt;</code>](#ConsumedMessage)
 Returns a list of messages published to the topic from last helper reset
 
 **Kind**: global function  
@@ -120,8 +115,8 @@ const msgs = await helper.messages()
 ```
 <a name="publishMessages"></a>
 
-### publishMessages(messages)
-Publish a list of messages to the topic
+## publishMessages(messages)
+Publishes a list of messages to the topic
 
 **Kind**: global function  
 
@@ -169,7 +164,7 @@ await helper.publishMessages([
 ```
 <a name="ConsumedMessage"></a>
 
-### ConsumedMessage : <code>Object</code>
+## ConsumedMessage : <code>Object</code>
 **Kind**: global typedef  
 **Properties**
 
