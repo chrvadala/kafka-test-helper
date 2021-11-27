@@ -20,8 +20,8 @@ Kafka test helper is able to work both with independent messages and messages ma
 You can use Kafka test helper in conjunction with your preferred testing library, because it is compatible with jest, mocha, tap and so on..., by the way it's agnostic by test runners.
 
 # Documentation
-- [Architecture](./docs/architecture)
-- [APIs](./docs/api)
+- [Architecture](./docs/architecture.md)
+- [APIs](./docs/api.md)
 
 # Install
 ```sh

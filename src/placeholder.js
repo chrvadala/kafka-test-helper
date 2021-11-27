@@ -1,5 +1,5 @@
 export const WHAT_IS_THAT_MESSAGE_KEY = 'what_is_that_message'
-export const WHAT_IS_THAT_MESSAGE_VALUE = 'https://github.com/chrvadala/kafka-test-helper'
+export const WHAT_IS_THAT_MESSAGE_VALUE = 'https://github.com/chrvadala/kafka-test-helper/blob/main/docs/architecture.md'
 
 export function makePlaceholderMessages (uuid, partions) {
   const messages = []
