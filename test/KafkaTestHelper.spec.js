@@ -23,6 +23,20 @@ afterAll(async () => {
   admin = null
 })
 
+describe('create', () => {
+  it('should create a KafkaTestHelper instance', async () => {
+    const testTopic = randomString('topic')
+    const topicHelper = await KafkaTestHelper.create(kafka, testTopic)
+
+    expect(typeof topicHelper).toBe('object')
+
+    expect(async () => {
+      await topicHelper.ensureTopicExists()
+      await topicHelper.ensureTopicDeleted()
+    }).not.toThrow()
+  })
+})
+
 describe('reset', () => {
   it('should construct and setup the component when topic exists', async () => {
     const testTopic = randomString('topic')

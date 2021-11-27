@@ -1,8 +1,17 @@
 import { expect, beforeAll, test } from '@jest/globals'
-import kafkaTestHelper from '../src/index.js'
+import createKafkaTestHelper from '../src/index.js'
 import { getKafka } from './_testUtils.js'
 
-const random = () => Math.round(Math.random() * 100_000)
+let i = 0
+const randomString = prefix => {
+  const random = new Date().toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\..*/, '')
+
+  const topic = `${random}_${prefix}_${i++}`
+
+  return topic
+}
 
 let kafka
 
@@ -10,9 +19,9 @@ beforeAll(async () => {
   kafka = getKafka()
 })
 
-test('index', async () => {
-  const testTopic = 'topic' + random()
-  const topicHelper = await kafkaTestHelper(kafka, testTopic)
+test('create KafkaTestHelper', async () => {
+  const testTopic = randomString('topic')
+  const topicHelper = await createKafkaTestHelper(kafka, testTopic)
 
   expect(typeof topicHelper).toBe('object')
 

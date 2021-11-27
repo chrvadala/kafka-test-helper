@@ -27,6 +27,19 @@ export default class KafkaTestHelper {
   }
 
   /**
+   * Creates and returns an instance of KafkaTestHelper
+   * @static
+   * @param {Kafka} kafka KafkaJS instance
+   * @param {string} topic Topic that this helper is going to monitor
+   * @returns {KafkaTestHelper}
+   */
+  static async create (kafka, topic) {
+    const helper = new KafkaTestHelper(kafka, topic)
+    await helper.reset()
+    return helper
+  }
+
+  /**
    * Resets the helper to the current offset
    * @function
    * @example await helper.reset()
