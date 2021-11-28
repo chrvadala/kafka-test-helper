@@ -47,3 +47,4 @@ npm install kafka-test-helper
 # References
 - https://cwiki.apache.org/confluence/display/KAFKA/KIP-98+-+Exactly+Once+Delivery+and+Transactional+Messaging
 - https://kafka.apache.org/documentation
+- https://github.com/edenhill/kcat#examples
