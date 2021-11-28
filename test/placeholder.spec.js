@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals'
 import { makePlaceholderMessages, isPlaceholderMessage, isPlaceholderMessageWithUUID } from '../src/placeholder.js'
 
 const validPlaceholder = JSON.stringify({
-  what_is_that_message: 'https://github.com/chrvadala/kafka-test-helper',
+  what_is_that_message: 'https://github.com/chrvadala/kafka-test-helper/blob/main/docs/architecture.md',
   kafka_test_helper: true,
   uuid: 'test123'
 })
@@ -15,7 +15,7 @@ const invalidPlaceholder = JSON.stringify({
 describe.only('placeholder', () => {
   test('makePlaceholderMessages', () => {
     const placeholder = JSON.stringify({
-      what_is_that_message: 'https://github.com/chrvadala/kafka-test-helper',
+      what_is_that_message: 'https://github.com/chrvadala/kafka-test-helper/blob/main/docs/architecture.md',
       kafka_test_helper: 'yes',
       uuid: 'test123'
     })
