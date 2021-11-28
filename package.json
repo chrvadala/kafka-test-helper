@@ -14,7 +14,8 @@
     "test:standard": "standard",
     "test:waitForKafkaReady": "node ./waitForKafkaReady.js",
     "docs:api": "jsdoc2md --template docs/templates/api.hbs --example-lang js --heading-depth 2 src/KafkaTestHelper.js > docs/api.md",
-    "build": "npm run docs:api"
+    "build": "npm run docs:api",
+    "test:examples": "node --experimental-vm-modules node_modules/jest/bin/jest.js examples/*"
   },
   "devDependencies": {
     "jest": "^27.2.1",
