@@ -185,14 +185,18 @@ export default class KafkaTestHelper {
   }
 
   /**
+   * @typedef {Object} ProducibleMessage
+   * @property {number} partition - Partition number
+   * @property {string} key - Message key
+   * @property {Buffer} buffer - Message value as Buffer
+   * @property {Object} json - Message value as object and serialized with JSON.stringify()
+   * @property {string} string - Message value as string
+   */
+
+  /**
    * Publishes a list of messages to the topic
    * @function
-   * @param {Object[]} messages - List of messages to publish
-   * @param {number} [messages[].partition] - Partition id
-   * @param {string} [messages[].key] - Message key
-   * @param {string} [messages[].string] - Message value as string
-   * @param {string} [messages[].json] - Message value as object and serialized with JSON.stringify()
-   * @param {Buffer} [messages[].buffer] - Message value as Buffer
+   * @param {ProducibleMessage[]} messages - List of messages to publish
    *
    * @example
    * await helper.publishMessages([

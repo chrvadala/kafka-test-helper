@@ -19,6 +19,9 @@
 ## Functions
 
 <dl>
+<dt><a href="#create">create(kafka, topic)</a> ⇒ <code><a href="#KafkaTestHelper">KafkaTestHelper</a></code></dt>
+<dd><p>Creates and returns an instance of KafkaTestHelper</p>
+</dd>
 <dt><a href="#reset">reset()</a></dt>
 <dd><p>Resets the helper to the current offset</p>
 </dd>
@@ -41,6 +44,8 @@
 <dl>
 <dt><a href="#ConsumedMessage">ConsumedMessage</a> : <code>Object</code></dt>
 <dd></dd>
+<dt><a href="#ProducibleMessage">ProducibleMessage</a> : <code>Object</code></dt>
+<dd></dd>
 </dl>
 
 # Specs
@@ -52,6 +57,18 @@
 
 ### new KafkaTestHelper()
 class representing a Kafka Test Helper
+
+<a name="create"></a>
+
+## create(kafka, topic) ⇒ [<code>KafkaTestHelper</code>](#KafkaTestHelper)
+Creates and returns an instance of KafkaTestHelper
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| kafka | <code>Kafka</code> | KafkaJS instance |
+| topic | <code>string</code> | Topic that this helper is going to monitor |
 
 <a name="reset"></a>
 
@@ -122,12 +139,7 @@ Publishes a list of messages to the topic
 
 | Param | Type | Description |
 | --- | --- | --- |
-| messages | <code>Array.&lt;Object&gt;</code> | List of messages to publish |
-| [messages[].partition] | <code>number</code> | Partition id |
-| [messages[].key] | <code>string</code> | Message key |
-| [messages[].string] | <code>string</code> | Message value as string |
-| [messages[].json] | <code>string</code> | Message value as object and serialized with JSON.stringify() |
-| [messages[].buffer] | <code>Buffer</code> | Message value as Buffer |
+| messages | [<code>Array.&lt;ProducibleMessage&gt;</code>](#ProducibleMessage) | List of messages to publish |
 
 **Example**  
 ```js
@@ -175,4 +187,18 @@ await helper.publishMessages([
 | buffer | <code>Buffer</code> | Buffer with message |
 | json | <code>Object</code> | Object with message |
 | string | <code>string</code> | String with message |
+
+<a name="ProducibleMessage"></a>
+
+## ProducibleMessage : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| partition | <code>number</code> | Partition number |
+| key | <code>string</code> | Message key |
+| buffer | <code>Buffer</code> | Message value as Buffer |
+| json | <code>Object</code> | Message value as object and serialized with JSON.stringify() |
+| string | <code>string</code> | Message value as string |
 
