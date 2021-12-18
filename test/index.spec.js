@@ -1,6 +1,6 @@
 import { expect, beforeAll, test } from '@jest/globals'
 import createKafkaTestHelper from '../src/index.js'
-import { getKafka } from './_testUtils.js'
+import getKafka from '../getKafka.js'
 
 let i = 0
 const randomString = prefix => {

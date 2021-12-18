@@ -1,7 +1,6 @@
-import { getKafka } from '../test/_testUtils.js'
+import createKafkaTestHelper from '../src/index.js' // kafka-test-helper
 import { test, jest, expect } from '@jest/globals'
-
-import createKafkaTestHelper from '../src/index.js'
+import getKafka from '../getKafka.js'
 import { ConsumerExample } from './ConsumerExample'
 
 test('ConsumerExample', async () => {

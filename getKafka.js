@@ -1,18 +1,19 @@
 import { Kafka, logLevel } from 'kafkajs'
 
-export function getKafka () {
+export default function getKafka () {
   const KAFKA_SERVER = process.env.KAFKA_SERVER
   if (!KAFKA_SERVER) {
-    console.error('KAFKA_SERVER environment variable not found')
+    console.error('KAFKA_SERVER environment variable not found (e.g. KAFKA_SERVER=localhost:9092)')
     process.exit(1)
   }
 
   return new Kafka({
-    clientId: 'tester',
+    clientId: 'kafka-test-helper',
     brokers: [KAFKA_SERVER],
     logLevel: logLevel.ERROR,
     retry: {
-      restartOnFailure: async () => false
+      restartOnFailure: async () => false,
+      retries: 10
     }
   })
 }

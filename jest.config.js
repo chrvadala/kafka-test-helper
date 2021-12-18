@@ -1,4 +1,6 @@
 export default {
   transform: {},
-  coveragePathIgnorePatterns: ['_testUtils.js']
+  coveragePathIgnorePatterns: [
+    '<rootDir>/getKafka.js'
+  ]
 }

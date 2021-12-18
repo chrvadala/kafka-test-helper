@@ -1,4 +1,4 @@
-import { getKafka } from './_testUtils.js'
+import getKafka from '../getKafka.js'
 import { describe, expect, it, beforeAll, afterAll } from '@jest/globals'
 import KafkaTestHelper from '../src/KafkaTestHelper.js'
 

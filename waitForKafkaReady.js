@@ -1,23 +1,11 @@
-import { Kafka } from 'kafkajs'
+import getKafka from './getKafka.js'
 
 waitForKafkaReady()
   .then(console.log)
   .catch(console.error)
 
 async function waitForKafkaReady (log = console.log) {
-  const KAFKA_SERVER = process.env.KAFKA_SERVER
-  if (!KAFKA_SERVER) {
-    console.error('KAFKA_SERVER environment variable not found')
-    process.exit(1)
-  }
-
-  const kafka = new Kafka({
-    clientId: 'tester',
-    brokers: [KAFKA_SERVER],
-    retry: {
-      retries: 10
-    }
-  })
+  const kafka = getKafka()
 
   const admin = kafka.admin()
 
