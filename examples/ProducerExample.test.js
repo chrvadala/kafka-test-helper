@@ -24,7 +24,6 @@ test('ProducerExample', async () => {
 
   // Kafka Test Helper retrieves published messages
   const messages = await topicHelper.messages()
-
   expect(messages).toHaveLength(1)
   expect(messages[0].json).toEqual({
     operation: 'doSomething',
