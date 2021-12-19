@@ -2,7 +2,19 @@ name: Release
 
 on:
   workflow_dispatch:
-     services:
+   inputs:
+      NEXT_VERSION:
+        description: Define next version (major/minor/patch)
+        required: true
+      REPOSITORY_NAME:
+        description: Repository full name (e.g. chrvadala/hello )
+        required: true
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.inputs.REPOSITORY_NAME ==  github.repository }}
+    services:
       zookeeper:
         image: confluentinc/cp-zookeeper:6.2.0
         ports:
@@ -24,18 +36,6 @@ on:
             KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
             KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
             KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-   inputs:
-      NEXT_VERSION:
-        description: Define next version (major/minor/patch)
-        required: true
-      REPOSITORY_NAME:
-        description: Repository full name (e.g. chrvadala/hello )
-        required: true
-
-jobs:
-  build_and_release:
-    runs-on: ubuntu-20.04
-    if: ${{ github.event.inputs.REPOSITORY_NAME ==  github.repository }}
     steps:
       - uses: actions/checkout@v2
       - name: Create .env file
