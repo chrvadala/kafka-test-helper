@@ -44,8 +44,8 @@ test('ProducerExample', async () => {
   await controller.setup(kafka, topicPrefix)
 
   const record = {
-    name: 'Mario',
-    surname: 'Rossi'
+    name: 'Tony',
+    surname: 'Stark'
   }
 
   await controller.doSomething(record)
