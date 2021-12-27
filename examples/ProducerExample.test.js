@@ -1,4 +1,4 @@
-import createKafkaTestHelper from '../src/index.js' // kafka-test-helper
+import { createKafkaTestHelper } from '../src/index.js' // kafka-test-helper
 import { test, expect } from '@jest/globals'
 import getKafka from '../getKafka.js'
 import { ProducerExample } from './ProducerExample'

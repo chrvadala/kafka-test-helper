@@ -32,6 +32,8 @@ npm install kafka-test-helper
 ## Testing a producer
 Full source code available here: [ProducerExample.test.js](https://github.com/chrvadala/kafka-test-helper/blob/main/examples/ProducerExample.test.js) and [ProducerExample.js](https://github.com/chrvadala/kafka-test-helper/blob/main/examples/ProducerExample.js)
 ````javascript
+import { createKafkaTestHelper } from 'kafka-test-helper'
+
 test('ProducerExample', async () => {
   // init Kafka Test helper
   const kafka = getKafka() // see https://kafka.js.org/docs/configuration
@@ -89,6 +91,8 @@ test('ProducerExample', async () => {
 ## Testing a consumer
 Full source code available here: [ConsumerExample.test.js](https://github.com/chrvadala/kafka-test-helper/blob/main/examples/ConsumerExample.test.js) and [ConsumerExample.js](https://github.com/chrvadala/kafka-test-helper/blob/main/examples/ConsumerExample.js)
 ````javascript
+import { createKafkaTestHelper } from 'kafka-test-helper'
+
 test('ConsumerExample', async () => {
   // init Kafka Test helper
   const kafka = getKafka() // see https://kafka.js.org/docs/configuration

@@ -13,7 +13,7 @@
     "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test:standard": "standard",
     "test:waitForKafkaReady": "node ./waitForKafkaReady.js",
-    "docs:api": "jsdoc2md --template docs/templates/api.hbs --example-lang js --heading-depth 2 src/KafkaTestHelper.js > docs/api.md",
+    "docs:api": "jsdoc2md --template docs/templates/api.hbs --example-lang js --heading-depth 2 src/*.js > docs/api.md",
     "build": "npm run docs:api",
     "test:examples": "NODE_OPTIONS=--experimental-vm-modules jest examples/*"
   },

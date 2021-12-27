@@ -10,16 +10,11 @@ const CONSUMER_TIMEOUT_DEFAULTS = {
 }
 
 /**
- * class representing a Kafka Test Helper
+ * @classdesc KafkaTestHelper is the class that helps you interacting with Apache Kafka
  * @class KafkaTestHelper
+ * @see You can construct a KafkaTestHelper instancevia {@link createKafkaTestHelper} method
  */
-export default class KafkaTestHelper {
-  /**
-   * Kafka Test Helper constructor
-   * @constructor
-   * @param {Kafka} kafka - Kafka client
-   * @param {string} topic - Topic name
-   */
+class KafkaTestHelper {
   constructor (kafka, topic) {
     this._kafka = kafka
     this._topic = topic
@@ -27,7 +22,8 @@ export default class KafkaTestHelper {
   }
 
   /**
-   * Creates and returns an instance of KafkaTestHelper
+   * @desc Creates and returns an instance of KafkaTestHelper
+   * @ignore
    * @static
    * @param {Kafka} kafka KafkaJS instance
    * @param {string} topic Topic that this helper is going to monitor
@@ -40,8 +36,7 @@ export default class KafkaTestHelper {
   }
 
   /**
-   * Resets the helper to the current offset
-   * @function
+   * @desc Resets the helper to the current offset
    * @example await helper.reset()
    */
   async reset () {
@@ -55,7 +50,6 @@ export default class KafkaTestHelper {
 
   /**
    * Creates a topic if doesn't exist
-   * @function
    * @param {number} [timeout = 5000] - Timeout in ms
    * @example await helper.ensureTopicExists()
    */
@@ -78,7 +72,6 @@ export default class KafkaTestHelper {
 
   /**
    * Deletes a topic if exists
-   * @function
    * @param {number} [timeout = 5000] - Timeout in ms
    * @example await helper.ensureTopicDeleted()
    */
@@ -104,7 +97,6 @@ export default class KafkaTestHelper {
 
   /**
    * Returns a list of messages published to the topic from last helper reset
-   * @function
    * @returns {ConsumedMessage[]}
    * @example const msgs = await helper.messages()
    * [
@@ -195,7 +187,6 @@ export default class KafkaTestHelper {
 
   /**
    * Publishes a list of messages to the topic
-   * @function
    * @param {ProducibleMessage[]} messages - List of messages to publish
    *
    * @example
@@ -254,7 +245,6 @@ export default class KafkaTestHelper {
 
   /**
    * Gets the admin client
-   * @function
    * @ignore
    * @returns {Kafka.Admin}
    */
@@ -266,7 +256,6 @@ export default class KafkaTestHelper {
 
   /**
    * Validates if the topic exists
-   * @function
    * @ignore
    * @param {Kafka.Admin} Kafka admin client
    * @returns {boolean}
@@ -277,3 +266,5 @@ export default class KafkaTestHelper {
     return exists
   }
 }
+
+export default KafkaTestHelper

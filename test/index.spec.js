@@ -1,5 +1,5 @@
 import { expect, beforeAll, test } from '@jest/globals'
-import createKafkaTestHelper from '../src/index.js'
+import { createKafkaTestHelper } from '../src/index.js'
 import getKafka from '../getKafka.js'
 
 let i = 0

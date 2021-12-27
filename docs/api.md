@@ -13,29 +13,15 @@
 
 <dl>
 <dt><a href="#KafkaTestHelper">KafkaTestHelper</a></dt>
-<dd></dd>
+<dd><p>KafkaTestHelper is the class that helps you interacting with Apache Kafka</p>
+</dd>
 </dl>
 
 ## Functions
 
 <dl>
-<dt><a href="#create">create(kafka, topic)</a> ⇒ <code><a href="#KafkaTestHelper">KafkaTestHelper</a></code></dt>
+<dt><a href="#createKafkaTestHelper">createKafkaTestHelper(kafka, topic)</a> ⇒ <code><a href="#KafkaTestHelper">KafkaTestHelper</a></code></dt>
 <dd><p>Creates and returns an instance of KafkaTestHelper</p>
-</dd>
-<dt><a href="#reset">reset()</a></dt>
-<dd><p>Resets the helper to the current offset</p>
-</dd>
-<dt><a href="#ensureTopicExists">ensureTopicExists([timeout])</a></dt>
-<dd><p>Creates a topic if doesn&#39;t exist</p>
-</dd>
-<dt><a href="#ensureTopicDeleted">ensureTopicDeleted([timeout])</a></dt>
-<dd><p>Deletes a topic if exists</p>
-</dd>
-<dt><a href="#messages">messages()</a> ⇒ <code><a href="#ConsumedMessage">Array.&lt;ConsumedMessage&gt;</a></code></dt>
-<dd><p>Returns a list of messages published to the topic from last helper reset</p>
-</dd>
-<dt><a href="#publishMessages">publishMessages(messages)</a></dt>
-<dd><p>Publishes a list of messages to the topic</p>
 </dd>
 </dl>
 
@@ -52,40 +38,34 @@
 <a name="KafkaTestHelper"></a>
 
 ## KafkaTestHelper
+KafkaTestHelper is the class that helps you interacting with Apache Kafka
+
 **Kind**: global class  
-<a name="new_KafkaTestHelper_new"></a>
+**See**: You can construct a KafkaTestHelper instancevia [createKafkaTestHelper](#createKafkaTestHelper) method  
 
-### new KafkaTestHelper()
-class representing a Kafka Test Helper
+* [KafkaTestHelper](#KafkaTestHelper)
+    * [.reset()](#KafkaTestHelper+reset)
+    * [.ensureTopicExists([timeout])](#KafkaTestHelper+ensureTopicExists)
+    * [.ensureTopicDeleted([timeout])](#KafkaTestHelper+ensureTopicDeleted)
+    * [.messages()](#KafkaTestHelper+messages) ⇒ [<code>Array.&lt;ConsumedMessage&gt;</code>](#ConsumedMessage)
+    * [.publishMessages(messages)](#KafkaTestHelper+publishMessages)
 
-<a name="create"></a>
+<a name="KafkaTestHelper+reset"></a>
 
-## create(kafka, topic) ⇒ [<code>KafkaTestHelper</code>](#KafkaTestHelper)
-Creates and returns an instance of KafkaTestHelper
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| kafka | <code>Kafka</code> | KafkaJS instance |
-| topic | <code>string</code> | Topic that this helper is going to monitor |
-
-<a name="reset"></a>
-
-## reset()
+### kafkaTestHelper.reset()
 Resets the helper to the current offset
 
-**Kind**: global function  
+**Kind**: instance method of [<code>KafkaTestHelper</code>](#KafkaTestHelper)  
 **Example**  
 ```js
 await helper.reset()
 ```
-<a name="ensureTopicExists"></a>
+<a name="KafkaTestHelper+ensureTopicExists"></a>
 
-## ensureTopicExists([timeout])
+### kafkaTestHelper.ensureTopicExists([timeout])
 Creates a topic if doesn't exist
 
-**Kind**: global function  
+**Kind**: instance method of [<code>KafkaTestHelper</code>](#KafkaTestHelper)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -95,12 +75,12 @@ Creates a topic if doesn't exist
 ```js
 await helper.ensureTopicExists()
 ```
-<a name="ensureTopicDeleted"></a>
+<a name="KafkaTestHelper+ensureTopicDeleted"></a>
 
-## ensureTopicDeleted([timeout])
+### kafkaTestHelper.ensureTopicDeleted([timeout])
 Deletes a topic if exists
 
-**Kind**: global function  
+**Kind**: instance method of [<code>KafkaTestHelper</code>](#KafkaTestHelper)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -110,12 +90,12 @@ Deletes a topic if exists
 ```js
 await helper.ensureTopicDeleted()
 ```
-<a name="messages"></a>
+<a name="KafkaTestHelper+messages"></a>
 
-## messages() ⇒ [<code>Array.&lt;ConsumedMessage&gt;</code>](#ConsumedMessage)
+### kafkaTestHelper.messages() ⇒ [<code>Array.&lt;ConsumedMessage&gt;</code>](#ConsumedMessage)
 Returns a list of messages published to the topic from last helper reset
 
-**Kind**: global function  
+**Kind**: instance method of [<code>KafkaTestHelper</code>](#KafkaTestHelper)  
 **Example**  
 ```js
 const msgs = await helper.messages()
@@ -130,12 +110,12 @@ const msgs = await helper.messages()
  ...
 ]
 ```
-<a name="publishMessages"></a>
+<a name="KafkaTestHelper+publishMessages"></a>
 
-## publishMessages(messages)
+### kafkaTestHelper.publishMessages(messages)
 Publishes a list of messages to the topic
 
-**Kind**: global function  
+**Kind**: instance method of [<code>KafkaTestHelper</code>](#KafkaTestHelper)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -173,6 +153,29 @@ await helper.publishMessages([
  },
 ...
 ])
+```
+<a name="createKafkaTestHelper"></a>
+
+## createKafkaTestHelper(kafka, topic) ⇒ [<code>KafkaTestHelper</code>](#KafkaTestHelper)
+Creates and returns an instance of KafkaTestHelper
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| kafka | <code>Kafka</code> | KafkaJS instance |
+| topic | <code>string</code> | Topic that this helper is going to monitor |
+
+**Example**  
+```js
+import {createKafkaTestHelper} from 'kafka-test-helper'
+
+test('your test', async () => {
+ const kafka = getKafka() // see https://kafka.js.org/docs/configuration
+ const topicPrefix = Date.now() //  this avoids cross test interference
+ const topicHelper = await createKafkaTestHelper(kafka, topicPrefix + 'test-topic')
+ //do your tests here
+})
 ```
 <a name="ConsumedMessage"></a>
 
