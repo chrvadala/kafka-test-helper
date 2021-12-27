@@ -163,12 +163,12 @@ Creates and returns an instance of KafkaTestHelper
 
 | Param | Type | Description |
 | --- | --- | --- |
-| kafka | <code>Kafka</code> | KafkaJS instance |
-| topic | <code>string</code> | Topic that this helper is going to monitor |
+| kafka | <code>Kafka</code> | KafkaJS instance. See [https://kafka.js.org/docs/configuration](https://kafka.js.org/docs/configuration) |
+| topic | <code>string</code> | Topic that the helper is going to monitor |
 
 **Example**  
 ```js
-import {createKafkaTestHelper} from 'kafka-test-helper'
+import { createKafkaTestHelper } from 'kafka-test-helper'
 
 test('your test', async () => {
  const kafka = getKafka() // see https://kafka.js.org/docs/configuration

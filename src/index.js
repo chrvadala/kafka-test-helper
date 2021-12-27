@@ -3,8 +3,8 @@ import KafkaTestHelper from './KafkaTestHelper.js'
 /**
    * Creates and returns an instance of KafkaTestHelper
    * @function createKafkaTestHelper
-   * @param {Kafka} kafka KafkaJS instance
-   * @param {string} topic Topic that this helper is going to monitor
+   * @param {Kafka} kafka - KafkaJS instance. See {@link https://kafka.js.org/docs/configuration}
+   * @param {string} topic Topic that the helper is going to monitor
    * @returns {KafkaTestHelper}
    * @example
    * import { createKafkaTestHelper } from 'kafka-test-helper'
