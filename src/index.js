@@ -7,7 +7,7 @@ import KafkaTestHelper from './KafkaTestHelper.js'
    * @param {string} topic Topic that this helper is going to monitor
    * @returns {KafkaTestHelper}
    * @example
-   * import {createKafkaTestHelper} from 'kafka-test-helper'
+   * import { createKafkaTestHelper } from 'kafka-test-helper'
    *
    * test('your test', async () => {
    *  const kafka = getKafka() // see https://kafka.js.org/docs/configuration
