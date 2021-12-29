@@ -1,6 +1,6 @@
 {
   "name": "kafka-test-helper",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "main": "src/index.js",
   "repository": "https://github.com/chrvadala/kafka-test-helper.git",
   "author": "Christian Vadalà <chr.vadala@gmail.com>",
