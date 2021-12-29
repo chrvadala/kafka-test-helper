@@ -131,6 +131,7 @@ test('ConsumerExample', async () => {
 
 # Changelog
 - **0.x** - Beta version
+- **1.0** - First official version
 
 # Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
