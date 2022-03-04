@@ -132,9 +132,11 @@ test('ConsumerExample', async () => {
 # Changelog
 - **0.x** - Beta version
 - **1.0** - First official version
+- **1.1** - Adds typescript definition [[#1](https://github.com/chrvadala/kafka-test-helper/issues/1)]; Upgrades deps
 
 # Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
+- [RodolfoSilva](https://github.com/RodolfoSilva)
 
 # References
 - https://cwiki.apache.org/confluence/display/KAFKA/KIP-98+-+Exactly+Once+Delivery+and+Transactional+Messaging
