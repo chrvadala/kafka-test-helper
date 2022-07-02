@@ -133,6 +133,7 @@ test('ConsumerExample', async () => {
 - **0.x** - Beta version
 - **1.0** - First official version
 - **1.1** - Adds typescript definition [[#1](https://github.com/chrvadala/kafka-test-helper/issues/1)]; Upgrades deps
+- **1.2** - Migrates to Kafka.JS 2; Upgrades deps; Upgrades referenced images on docker-compose
 
 # Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
