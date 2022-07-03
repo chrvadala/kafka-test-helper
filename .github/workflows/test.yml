@@ -30,6 +30,7 @@ jobs:
             KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
             KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     strategy:
+      max-parallel: 1 # for some reason, sometimes parallels execution fail
       matrix:
         os: [ ubuntu-20.04 ]
         node: [ 14, 16 ]
