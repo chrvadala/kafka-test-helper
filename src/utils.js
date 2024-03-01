@@ -1,5 +1,10 @@
+import { getRandomValues } from 'crypto'
+
 export function randomNumber () {
-  return Math.round(Math.random() * 100_000)
+  const array = new Uint32Array(1)
+  getRandomValues(array)
+
+  return array[0]
 }
 
 export function tryToConvertBufferToJson (buffer) {
