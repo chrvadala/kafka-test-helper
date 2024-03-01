@@ -1,7 +1,7 @@
 version: "3"
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.1.2
+    image: confluentinc/cp-zookeeper:7.6.0
     hostname: zookeeper
     container_name: zookeeper-1
     ports:
@@ -11,7 +11,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:7.1.2
+    image: confluentinc/cp-kafka:7.6.0
     hostname: broker
     container_name: kafka-1
     depends_on:
@@ -31,7 +31,7 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_JMX_PORT: 9101
       KAFKA_JMX_HOSTNAME: localhost
-  
+        
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     ports: 

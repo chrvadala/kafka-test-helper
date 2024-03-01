@@ -9,14 +9,14 @@ jobs:
   build:
     services:
       zookeeper:
-        image: confluentinc/cp-zookeeper:6.2.0
+        image: confluentinc/cp-zookeeper:7.6.0
         ports:
           - 2181:2181
         env:
           ZOOKEEPER_CLIENT_PORT: 2181
           ZOOKEEPER_TICK_TIME: 2000
       kafka:
-          image: confluentinc/cp-kafka:6.2.0
+          image: confluentinc/cp-kafka:7.6.0
           ports:
             - 29092:29092
             - 9092:9092
@@ -32,12 +32,12 @@ jobs:
     strategy:
       max-parallel: 1 # for some reason, sometimes parallels execution fail
       matrix:
-        os: [ ubuntu-20.04 ]
-        node: [ 14, 16 ]
+        os: [ ubuntu-22.04 ]
+        node: [ 16, 18, 20 ]
     name: Test Nodejs v${{ matrix.node }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Create .env file
         run: |
           cat > .env <<EOF
@@ -47,7 +47,7 @@ jobs:
         with:
           NODE_VERSION: ${{ matrix.node }}
       - name: Publish Coveralls
-        uses: coverallsapp/github-action@v1.1.2
+        uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: run-nodejs-v${{ matrix.node }}-${{ matrix.os }}
@@ -55,10 +55,10 @@ jobs:
   finish:
     name: Finish
     needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@v1.1.2
+        uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
