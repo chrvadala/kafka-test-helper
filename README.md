@@ -3,7 +3,7 @@
 Kafka test helper is a Node.js library that helps you writing integration tests that interacts with Apache Kafka.
 
 [![chrvadala](https://img.shields.io/badge/website-chrvadala-orange.svg)](https://chrvadala.github.io)
-[![Test](https://github.com/chrvadala/kafka-test-helper/workflows/Test/badge.svg)](https://github.com/chrvadala/node-ble/actions)
+[![Test](https://github.com/chrvadala/kafka-test-helper/workflows/Test/badge.svg)](https://github.com/chrvadala/kafka-test-helper/actions)
 [![Coverage Status](https://coveralls.io/repos/github/chrvadala/kafka-test-helper/badge.svg)](https://coveralls.io/github/chrvadala/kafka-test-helper)
 [![npm](https://img.shields.io/npm/v/kafka-test-helper.svg?maxAge=2592000?style=plastic)](https://www.npmjs.com/package/kafka-test-helper)
 [![Downloads](https://img.shields.io/npm/dm/kafka-test-helper.svg)](https://www.npmjs.com/package/kafka-test-helper)
@@ -134,6 +134,7 @@ test('ConsumerExample', async () => {
 - **1.0** - First official version
 - **1.1** - Adds typescript definition [[#1](https://github.com/chrvadala/kafka-test-helper/issues/1)]; Upgrades deps
 - **1.2** - Migrates to Kafka.JS 2; Upgrades deps; Upgrades referenced images on docker-compose
+- **1.3** - Fixes `js/insecure-randomness` security issue; Deprecates Node.js 14 and 16; Upgrades deps, Kafka docker images and workflows
 
 # Contributors
 - [chrvadala](https://github.com/chrvadala) (author)
