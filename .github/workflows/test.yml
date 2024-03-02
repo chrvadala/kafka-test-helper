@@ -33,7 +33,7 @@ jobs:
       max-parallel: 1 # for some reason, sometimes parallels execution fail
       matrix:
         os: [ ubuntu-22.04 ]
-        node: [ 16, 18, 20 ]
+        node: [ 18, 20 ]
     name: Test Nodejs v${{ matrix.node }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
