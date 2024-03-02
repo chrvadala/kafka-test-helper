@@ -7,10 +7,16 @@ export default function getKafka () {
     process.exit(1)
   }
 
+  let logLevelConf = logLevel.INFO
+
+  if (process.env.NODE_ENV === 'test') {
+    logLevelConf = logLevel.NOTHING
+  }
+
   return new Kafka({
     clientId: 'kafka-test-helper',
     brokers: [KAFKA_SERVER],
-    logLevel: logLevel.ERROR,
+    logLevel: logLevelConf,
     retry: {
       restartOnFailure: async () => false,
       retries: 10
